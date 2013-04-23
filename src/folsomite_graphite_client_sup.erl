@@ -35,6 +35,8 @@ init(no_arg) -> {ok, {{one_for_one, 5, 10}, []}}.
 
 
 %% internal
+start_client(undefined, undefined) ->
+	{error, not_configured};
 start_client(Host, Port) ->
       supervisor:start_child(
         ?MODULE,
@@ -46,5 +48,9 @@ start_client(Host, Port) ->
          [folsomite_graphite_client]}).
 
 get_env(Name) ->
-    {ok, Value} = application:get_env(?APP, Name),
-    Value.
+	case application:get_env(?APP, Name) of
+		{ok, Value} ->
+			Value;
+		Other ->
+			Other
+	end.
